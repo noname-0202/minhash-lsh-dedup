@@ -1,5 +1,5 @@
 # Overview
-A fast library for deleting duplicates, created with reference to (hojichar)[https://github.com/HojiChar/HojiChar].
+A fast library for deleting duplicates, created with reference to [hojichar](https://github.com/HojiChar/HojiChar).
 This library is about 10x faster than hojichar.filters.deduplication. 
 
 # Install
