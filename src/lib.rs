@@ -2,6 +2,7 @@ use ::std::fmt::Write;
 use murmur3::murmur3_32;
 use pyo3::prelude::*;
 use std::io::Cursor;
+use std::collections::HashSet;
 
 fn n_gram_tokenize(text: &String, n: usize) -> Vec<String> {
     let chars: Vec<char> = text.chars().collect();
@@ -74,14 +75,14 @@ fn generate_dedup_lsh(
 
 #[pyclass]
 struct LSHDeduplicator {
-    seen: Vec<String>,
+    seen: HashSet<String>,
 }
 
 #[pymethods]
 impl LSHDeduplicator {
     #[new]
     fn new() -> Self {
-        Self { seen: Vec::new() }
+        Self { seen: HashSet::new() }
     }
     fn is_rejected(&mut self, hashes: Vec<String>) -> PyResult<bool> {
         let mut num_rejected: i64 = 0;
@@ -89,7 +90,7 @@ impl LSHDeduplicator {
             if self.seen.contains(&hash) {
                 num_rejected += 1;
             } else {
-                self.seen.push(hash.to_string());
+                self.seen.insert(hash.to_string());
             }
         }
         Ok(num_rejected > 0)
