@@ -2,6 +2,17 @@
 A fast library for deleting duplicates, created with reference to (hojichar)[https://github.com/HojiChar/HojiChar].
 This library is about 10x faster than hojichar.filters.deduplication. 
 
+# Install
+## With pip
+To install the latest version:
+```bash
+pip install minhash-lsh-dedup
+```
+To install the latest commit:
+```bash
+pip install https://github.com/noname-0202/minhash-lsh-dedup
+```
+
 # Example
 ```python
 import datasets
