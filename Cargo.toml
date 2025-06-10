@@ -1,6 +1,6 @@
 [package]
 name = "minhash-lsh-dedup"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -18,6 +18,3 @@ lto = "fat"         # リンク時最適化 (LTO) を有効にします。"fat" 
 codegen-units = 1   # コード生成ユニット数を1にすることで、LLVMがより広範囲な最適化を行えるようにします。並列コンパイル性が犠牲になります。
 panic = "abort"     # パニック時にスタックアンワインドを行わず、即座にプログラムを終了させます。これによりバイナリサイズが若干小さくなり、オーバーヘッドが減る場合があります。
 strip = true        # デバッグシンボルやその他の不要な情報をバイナリから削除します。"symbols" も指定可能です。
-# debug = false       # デバッグ情報を完全に削除します (strip = true と似ていますが、より強力な場合があります)
-# debug-assertions = false # デバッグアサーションを無効化します (リリースビルドではデフォルトで無効です)
-# overflow-checks = false  # 整数オーバーフローチェックを無効化します (リリースビルドではデフォルトで無効です)

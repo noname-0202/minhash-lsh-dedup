@@ -20,37 +20,37 @@ fn n_gram_tokenize(text: &String, n: usize) -> Vec<String> {
     tokenized
 }
 
-fn mmh3(text: &String, seed: u32) -> i32 {
+fn mmh3(text: &String, seed: u32) -> u32 {
     let mut bytes_reader = Cursor::new(text.as_bytes());
-    let hash_value_u32 = murmur3_32(&mut bytes_reader, seed).unwrap();
-    hash_value_u32 as i32
+    let hash_value = murmur3_32(&mut bytes_reader, seed).unwrap();
+    hash_value
 }
 
-fn get_minhash(tokens: &[String], seed: u32) -> i32 {
+fn get_minhash(tokens: &[String], seed: u32) -> u32 {
     if tokens.is_empty() {
-        return i32::MAX;
+        return u32::MAX;
     }
     tokens
         .iter()
         .map(|text| mmh3(text, seed))
         .min()
-        .unwrap_or(i32::MAX)
+        .unwrap_or(u32::MAX)
 }
 
 #[pyfunction]
 fn generate_dedup_lsh(
     text: String,
-    n_minhash: i64,
-    n_gram: i64,
-    n_buckets: i64,
-    bucket_size: i64,
+    n_minhash: i32,
+    n_gram: i32,
+    n_buckets: i32,
+    bucket_size: i32,
 ) -> PyResult<Vec<String>> {
     let n_gram_tokenized: Vec<String> = n_gram_tokenize(&text, n_gram as usize);
-    let fingerprints: Vec<i32>=(0..n_minhash as u32).map(|seed|get_minhash(&n_gram_tokenized, seed)).collect();
+    let fingerprints: Vec<u32>=(0..n_minhash as u32).map(|seed|get_minhash(&n_gram_tokenized, seed)).collect();
 
-    let mut lshs: Vec<String> = Vec::with_capacity(n_buckets as usize);
     let n_buckets_usize: usize=n_buckets as usize;
     let bucket_size_usize: usize=bucket_size as usize;
+    let mut lshs: Vec<String> = Vec::with_capacity(n_buckets_usize);
     for bucket_idx in 0..n_buckets_usize {
         let start_fp_idx = bucket_idx * bucket_size_usize;
         let end_fp_idx = (bucket_idx + 1) * bucket_size_usize;
@@ -63,7 +63,7 @@ fn generate_dedup_lsh(
 
         if actual_slice_start < actual_slice_end {
             for &fp_val in &fingerprints[actual_slice_start..actual_slice_end] {
-                let val_to_format = (fp_val as u32) & 0xFFFF;
+                let val_to_format = fp_val & 0xFFFF;
                 write!(&mut concatenated_fp_parts, "{:04x}", val_to_format).unwrap();
             }
         }
@@ -90,7 +90,7 @@ impl LSHDeduplicator {
             if self.seen.contains(&hash) {
                 num_rejected += 1;
             } else {
-                self.seen.insert(hash.to_string());
+                self.seen.insert(hash);
             }
         }
         Ok(num_rejected > 0)
